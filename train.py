@@ -324,8 +324,6 @@ def main_worker(gpu, ngpus_per_node, args):
                          'scheduler': scheduler.state_dict()
                          }
 
-
-
             save_checkpoint(save_dict, is_best, filepath=log_folder)
             try:
                 # get_lr get all lrs for every layer of current epoch, assume the lr for all layers are identical
