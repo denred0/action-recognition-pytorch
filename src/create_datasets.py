@@ -25,6 +25,7 @@ def create_txt_files(root_directory, destination_directory, val_split_size, test
             print(record, file=text_file)
 
     all_data = []
+    index = 0
     for folder in tqdm(folder_names):
         path = Path(root_directory).joinpath(folder)
 
@@ -32,8 +33,9 @@ def create_txt_files(root_directory, destination_directory, val_split_size, test
 
         for subdir, dirs, files in os.walk(path):
             for i, dir in enumerate(dirs):
+                index += 1
                 # create folder for video images
-                video_folder = 'video_label_' + str(label) + '_number_' + str(i)
+                video_folder = str(index) + '_video_label_' + str(label) + '_number_' + str(i)
                 dest_path = Path(destination_directory).joinpath('videos').joinpath(video_folder)
                 source_path = Path(root_directory).joinpath(folder).joinpath(dir)
                 Path(dest_path).mkdir(parents=True, exist_ok=True)
@@ -41,8 +43,8 @@ def create_txt_files(root_directory, destination_directory, val_split_size, test
                 # filenames
                 _, _, filenames = next(os.walk(source_path))
 
-                for file in filenames:
-                    shutil.copy(os.path.join(source_path, file), os.path.join(dest_path, file))
+                for f_ind, file in enumerate(filenames):
+                    shutil.copy(os.path.join(source_path, file), os.path.join(dest_path, f"{(f_ind + 1):05d}.jpg"))
 
                 record = [str(dest_path), 1, len(filenames), label]
                 all_data.append(record)

@@ -53,6 +53,15 @@ DATASET_CONFIG = {
         'image_tmpl': '{:05d}.jpg',
         'filter_video': 0
     },
+    'test_dataset': {
+        'num_classes': 7,
+        'train_list_name': 'train.txt',
+        'val_list_name': 'val.txt',
+        'test_list_name': 'test.txt',
+        'filename_seperator': " ",
+        'image_tmpl': '{:05d}.jpg',
+        'filter_video': 0
+    },
 }
 
 

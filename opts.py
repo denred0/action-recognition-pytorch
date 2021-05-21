@@ -6,7 +6,7 @@ def arg_parser():
     parser = argparse.ArgumentParser(description='PyTorch Action recognition Training')
 
     # model definition
-    parser.add_argument('--backbone_net', default='s3d', type=str, help='backbone network',
+    parser.add_argument('--backbone_net', default='resnet', type=str, help='backbone network',
                         choices=list(MODEL_TABLE.keys()))
     parser.add_argument('-d', '--depth', default=18, type=int, metavar='N',
                         help='depth of resnet (default: 18)', choices=[18, 34, 50, 101, 152])
@@ -36,8 +36,8 @@ def arg_parser():
     parser.add_argument('--gpu', help='comma separated list of GPU(s) to use.')
     parser.add_argument('--disable_cudnn_benchmark', dest='cudnn_benchmark', action='store_false',
                         help='Disable cudnn to search the best mode (avoid OOM)')
-    parser.add_argument('-b', '--batch-size', default=256, type=int,
-                        metavar='N', help='mini-batch size (default: 256)')
+    parser.add_argument('-b', '--batch-size', default=2, type=int,
+                        metavar='N', help='mini-batch size (default: 2)')
     parser.add_argument('--lr', '--learning-rate', default=0.01, type=float,
                         metavar='LR', help='initial learning rate')
     parser.add_argument('--lr_scheduler', default='cosine', type=str,
@@ -52,7 +52,7 @@ def arg_parser():
                         help='enable nesterov momentum optimizer')
     parser.add_argument('--weight-decay', '--wd', default=5e-4, type=float,
                         metavar='W', help='weight decay (default: 5e-4)')
-    parser.add_argument('--epochs', default=50, type=int, metavar='N',
+    parser.add_argument('--epochs', default=40, type=int, metavar='N',
                         help='number of total epochs to run')
     parser.add_argument('--resume', default='', type=str, metavar='PATH',
                         help='path to latest checkpoint (default: none)')
@@ -69,8 +69,8 @@ def arg_parser():
     # data-related
     parser.add_argument('-j', '--workers', default=18, type=int, metavar='N',
                         help='number of data loading workers (default: 18)')
-    parser.add_argument('--datadir', metavar='DIR', help='path to dataset file list')
-    parser.add_argument('--dataset', default='st2stv2',
+    parser.add_argument('--datadir', default='dataset_dir', help='path to dataset file list')
+    parser.add_argument('--dataset', default='test_dataset',
                         choices=list(DATASET_CONFIG.keys()), help='which dataset.')
     parser.add_argument('--threed_data', action='store_true',
                         help='format data to 5D for 3D onv.')

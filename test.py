@@ -9,6 +9,8 @@ import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
 from tqdm import tqdm
+import pickle
+from collections import OrderedDict
 
 from models import build_model
 from utils.utils import build_dataflow, AverageMeter, accuracy
@@ -46,7 +48,8 @@ def main():
     args = parser.parse_args()
     cudnn.benchmark = True
 
-    num_classes, train_list_name, val_list_name, test_list_name, filename_seperator, image_tmpl, filter_video, label_file = get_dataset_config(args.dataset)
+    num_classes, train_list_name, val_list_name, test_list_name, filename_seperator, image_tmpl, filter_video, label_file = get_dataset_config(
+        args.dataset)
 
     data_list_name = val_list_name if args.evaluate else test_list_name
 
@@ -85,10 +88,22 @@ def main():
     model = model.cuda()
     model.eval()
 
+    args.pretrained = 'test_dataset-rgb-resnet-18-ts-max-f16-cosine-bs2-e40/model_best.pth.tar'
+    # weights = pickle.load(open(args.pretrained, 'rb'))
+
     if args.pretrained is not None:
+
         print("=> using pre-trained model '{}'".format(arch_name))
         checkpoint = torch.load(args.pretrained, map_location='cpu')
+        new_state_dict = OrderedDict()
+        for k, v in checkpoint['state_dict'].items():
+            name = k[7:]  # remove `module.`
+            new_state_dict[name] = v
+
+        checkpoint['state_dict'] = new_state_dict
+
         model.load_state_dict(checkpoint['state_dict'])
+        # model.load_state_dict(args.pretrained)
     else:
         print("=> creating model '{}'".format(arch_name))
 
@@ -127,11 +142,11 @@ def main():
     print("Number of clips: {}".format(args.num_clips))
 
     val_dataset = VideoDataSet(args.datadir, data_list, args.groups, args.frames_per_group,
-                                 num_clips=args.num_clips, modality=args.modality,
-                                 image_tmpl=image_tmpl, dense_sampling=args.dense_sampling,
-                                 fixed_offset=not args.random_sampling,
-                                 transform=augmentor, is_train=False, test_mode=not args.evaluate,
-                                 seperator=filename_seperator, filter_video=filter_video)
+                               num_clips=args.num_clips, modality=args.modality,
+                               image_tmpl=image_tmpl, dense_sampling=args.dense_sampling,
+                               fixed_offset=not args.random_sampling,
+                               transform=augmentor, is_train=False, test_mode=not args.evaluate,
+                               seperator=filename_seperator, filter_video=filter_video)
 
     data_loader = build_dataflow(val_dataset, is_train=False, batch_size=args.batch_size,
                                  workers=args.workers)

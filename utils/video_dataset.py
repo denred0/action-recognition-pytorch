@@ -113,7 +113,8 @@ class VideoDataSet(data.Dataset):
             return img
 
         num_try = 0
-        image_path_file = os.path.join(self.root_path, directory, self.image_tmpl.format(idx))
+        image_path_file = os.path.join(directory, self.image_tmpl.format(idx))
+        # image_path_file = os.path.join(self.root_path, directory, self.image_tmpl.format(idx))
         img = None
         while num_try < 10:
             try:
@@ -288,7 +289,8 @@ class VideoDataSet(data.Dataset):
         images = self.transform(images)
         if self.test_mode:
             # in test mode, return the video id as label
-            label = int(record.video_id)
+            f = record.video_id.split('_')
+            label = int(f[0])
         else:
             label = int(record.label)
 
