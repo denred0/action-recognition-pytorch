@@ -41,8 +41,8 @@ def create_txt_files(root_directory, destination_directory, val_split_size, test
                 # filenames
                 _, _, filenames = next(os.walk(source_path))
 
-                # for file in filenames:
-                #     shutil.copy(os.path.join(source_path, file), os.path.join(dest_path, file))
+                for file in filenames:
+                    shutil.copy(os.path.join(source_path, file), os.path.join(dest_path, file))
 
                 record = [str(dest_path), 1, len(filenames), label]
                 all_data.append(record)
