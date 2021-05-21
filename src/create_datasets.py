@@ -73,6 +73,11 @@ def create_txt_files(root_directory, destination_directory, val_split_size, test
                 rec = str(data[0]) + ' ' + str(data[1]) + ' ' + str(data[2])
                 print(rec, file=text_file)
 
+        with open(Path(destination_directory).joinpath('all_data.txt'), "w") as text_file:
+            for data in all_data:
+                rec = str(data[0]) + ' ' + str(data[1]) + ' ' + str(data[2]) + ' ' + str(data[3])
+                print(rec, file=text_file)
+
 
 if __name__ == '__main__':
     root_directory = 'data/initial_videos'

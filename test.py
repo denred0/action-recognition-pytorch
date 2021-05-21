@@ -9,7 +9,7 @@ import torch.utils.data
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
 from tqdm import tqdm
-import pickle
+import csv
 from collections import OrderedDict
 
 from models import build_model
@@ -88,13 +88,14 @@ def main():
     model = model.cuda()
     model.eval()
 
-    args.pretrained = 'test_dataset-rgb-resnet-18-ts-max-f16-cosine-bs2-e40/model_best.pth.tar'
+    args.pretrained = 'test_dataset-rgb-resnet-18-ts-max-f16-cosine-bs2-e100/model_best.pth.tar'
     # weights = pickle.load(open(args.pretrained, 'rb'))
 
     if args.pretrained is not None:
 
         print("=> using pre-trained model '{}'".format(arch_name))
         checkpoint = torch.load(args.pretrained, map_location='cpu')
+        # delete module word
         new_state_dict = OrderedDict()
         for k, v in checkpoint['state_dict'].items():
             name = k[7:]  # remove `module.`
@@ -169,6 +170,9 @@ def main():
     # switch to evaluate mode
     model.eval()
     total_batches = len(data_loader)
+    total_samples = 0
+    true_positive = 0
+
     with torch.no_grad(), tqdm(total=total_batches) as t_bar:
         end = time.time()
         for i, (video, label) in enumerate(data_loader):
@@ -193,7 +197,14 @@ def main():
                     # preds = [id_to_label[str(pred)] for pred in predictions[ii][::-1][:5]]
                     temp = predictions[ii][::-1][:5]
                     preds = [str(pred) for pred in temp]
-                    print("{};{}".format(label[ii], ";".join(preds)), file=logfile)
+
+                    gt = get_ground_truth(label[ii].item())
+
+                    print("{};{};{}".format(label[ii], ";".join(preds), gt), file=logfile)
+                    total_samples += 1
+                    if preds[0] == gt:
+                        true_positive += 1
+
             total_outputs += video.shape[0]
             batch_time.update(time.time() - end)
             end = time.time()
@@ -201,6 +212,9 @@ def main():
 
         outputs = outputs[:total_outputs]
         print("Predict {} videos.".format(total_outputs), flush=True)
+
+        print('Accuracy: {}'.format(round(true_positive / total_samples, 3)))
+
         np.save(os.path.join(log_folder, '{}_{}crops_{}clips_{}_details.npy'.format(
             "val" if args.evaluate else "test", args.num_crops,
             args.num_clips, args.input_size)), outputs)
@@ -214,6 +228,22 @@ def main():
             flush=True, file=logfile)
 
     logfile.close()
+
+
+def get_ground_truth(video_number):
+    all_data = []
+    with open('dataset_dir/all_data.txt', 'r') as fd:
+        reader = csv.reader(fd)
+        for row in reader:
+            str1 = ' '.join(str(e) for e in row)
+            all_data.append(str1)
+
+    substring = '/' + str(video_number) + '_'
+    matching = [s for s in all_data if substring in s]
+
+    values = matching[0].split(' ')
+
+    return values[len(values) - 1]
 
 
 if __name__ == '__main__':
