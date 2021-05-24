@@ -8,7 +8,7 @@ def arg_parser():
     # model definition
     parser.add_argument('--backbone_net', default='resnet', type=str, help='backbone network',
                         choices=list(MODEL_TABLE.keys()))
-    parser.add_argument('-d', '--depth', default=152, type=int, metavar='N',
+    parser.add_argument('-d', '--depth', default=18, type=int, metavar='N',
                         help='depth of resnet (default: 18)', choices=[18, 34, 50, 101, 152])
     parser.add_argument('--dropout', default=0.5, type=float,
                         help='dropout ratio before the final layer')

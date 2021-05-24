@@ -1,5 +1,3 @@
-
-
 DATASET_CONFIG = {
     'st2stv2': {
         'num_classes': 174,
@@ -54,7 +52,7 @@ DATASET_CONFIG = {
         'filter_video': 0
     },
     'test_dataset': {
-        'num_classes': 7,
+        'num_classes': 5,
         'train_list_name': 'train.txt',
         'val_list_name': 'val.txt',
         'test_list_name': 'test.txt',

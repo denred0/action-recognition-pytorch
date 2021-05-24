@@ -35,7 +35,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def accuracy(output, target, topk=(1, 3)):
+def accuracy(output, target, topk=(1, 5)):
     """Computes the precision@k for the specified values of k"""
     with torch.no_grad():
         maxk = max(topk)

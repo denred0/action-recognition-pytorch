@@ -153,8 +153,8 @@ class VideoDataSet(data.Dataset):
                     tmp.append(elements)
 
         num = len(tmp)
-        print("The number of videos is {} (with more than {} frames) "
-              "(original: {})".format(num, self.filter_video, original_video_numbers), flush=True)
+        # print("The number of videos is {} (with more than {} frames) "
+        #       "(original: {})".format(num, self.filter_video, original_video_numbers), flush=True)
         assert (num > 0)
         file_list = []
         for item in tmp:

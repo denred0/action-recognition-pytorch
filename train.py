@@ -29,6 +29,9 @@ def main():
     parser = arg_parser()
     args = parser.parse_args()
 
+    args.backbone_net = 'inception_v1'
+    args.depth = 152
+
     args.distributed = args.world_size > 1 or args.multiprocessing_distributed
     ngpus_per_node = torch.cuda.device_count()
     if args.multiprocessing_distributed:
